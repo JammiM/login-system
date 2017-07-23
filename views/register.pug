@@ -3,6 +3,9 @@ extends layout
 block content
   h2.page-header Register
   p Please register using the below form
+  if errors
+    each error, i in errors
+      div.alert.alert-danger #{error.msg}
   form(method='post', action='/users/register', enctype='multipart/form-data')
    .form-group
     label Name
@@ -10,6 +13,9 @@ block content
    .form-group
     label Email
     input.form-control(name='email', type='email', placehoder='Enter email')
+   .form-group
+    label User Name
+    input.form-control(name='userName', type='text', placehoder='Enter User Name')
    .form-group
     label Password
     input.form-control(name='password', type='password', placehoder='Enter Password')
