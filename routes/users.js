@@ -7,13 +7,16 @@ router.get('/', function(req, res, next) {
 });
 
 
-
+// Displays the register page
 router.get('/register', function(req, res, next) {
   res.render('register');
 });
 
 
-
+// Displays the login page
+router.get('/login', function(req, res, next) {
+  res.render('login');
+});
 
 
 
