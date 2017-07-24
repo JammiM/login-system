@@ -85,6 +85,9 @@ if(errors){
     console.log(newUser);
   });
 
+
+  req.flash('sucess','You are now registered !')
+
   // Redirects to the home page
   res.location('/');
   res.redirect('/');
