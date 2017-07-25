@@ -33,6 +33,33 @@ var UserSchema = mongoose.Schema({
 // Allowing for 'users' & 'createUser' to be used outside of this file
 var User = module.exports = mongoose.model('User', UserSchema);
 
+
+
+module.exports.getUserById = function(id, callback) {
+
+  User.findById(id, callback);
+
+}// getUserById
+
+
+
+module.exports.getUserByUsername = function(username, callback) {
+
+  var query = { username: username};
+  User.findOne(query, callback);
+
+}// getUserByUsername
+
+
+module.exports.comparePassword = function(candidatePassword, hash, callback) {
+    
+  bcrypt.compare(candidatePassword, hash, function(err, isMatch) {
+      callback(null, isMatch);
+  });
+
+}
+
+
 module.exports.createUser = function(newUser, callback) {
 
   bcrypt.genSalt(10, function(err, salt) {
@@ -42,7 +69,4 @@ module.exports.createUser = function(newUser, callback) {
       });
   });
 
-
-
-
-}
+}// createUser

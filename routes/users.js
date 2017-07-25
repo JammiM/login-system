@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var multer = require('multer');
 var upload = multer({dest: './uploads'});
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 
 
 /* Links to models folder, allowing for access to the User object*/
@@ -23,6 +25,78 @@ router.get('/register', function(req, res, next) {
 router.get('/login', function(req, res, next) {
   res.render('login', {title: 'Login'});
 });
+
+
+
+
+// Passport login system
+router.post('/login',
+  passport.authenticate('local', {failureRedirect: '/users/login', failureFlash: 'Invalid user name or password.'}),
+  function(req, res) {
+    // If this function gets called, authentication was successful.
+    // `req.user` contains the authenticated user.
+    req.flash('success', 'You are logged in !!!')
+    //res.redirect('/users/' + req.user.username);
+    res.redirect('/');
+
+  });
+
+
+
+// 
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.getUserById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+
+
+
+
+passport.use(new LocalStrategy(function(username, password, done){
+
+
+  // Gets the user by the username passed in.
+  User.getUserByUsername(username, function (err, user) {
+
+    // if there's an error then throw the error
+    if(err) throw err;
+
+    // If there is not a user
+    if(!user){
+      return done(null, false, {message: 'Unknown User'});
+    }
+
+    // Compares the users password
+    User.comparePassword(password, user.password, function(err, isMatch) {
+      
+     // if there's an error then throw the error
+      if(err) return done(err);
+
+      // if there's an error then throw the error
+      if(isMatch){
+
+        // if the password does match
+        return done(null, user);
+      } else {
+
+        // if the password does not match
+        return done(null, false, {message:'Invalid Password'})
+      }
+
+    }); // User.comparePassword
+
+  }); // getUserByUsername
+
+})); // passport.use
+
+
+
 
 
 // Uploads the profile picture
